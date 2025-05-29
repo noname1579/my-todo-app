@@ -11,6 +11,7 @@ interface TaskItemProps {
     date: string
   }
   onToggleComplete: () => void
+  deleteTask: () => void
 }
 
 export default function TaskItem({ task, onToggleComplete, deleteTask }: TaskItemProps) {
