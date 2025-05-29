@@ -18,7 +18,6 @@ export default function Home() {
   const [date, setDate] = useState<string>('')
   const [tasks, setTasks] = useState<Task[]>([])
 
-  // Load tasks from localStorage on component mount
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks')
     if (storedTasks) {
