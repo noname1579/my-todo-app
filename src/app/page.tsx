@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react"
 import Header from "./components/Header"
 import Span from "./components/Span"
-import { Search } from "lucide-react"
+import { ClipboardList, Funnel, Search } from "lucide-react"
+import Task from "./components/Task"
 
 interface Task {
   title: string
@@ -29,6 +30,11 @@ export default function Home() {
     localStorage.setItem('tasks', JSON.stringify(tasks))
   }, [tasks])
 
+  const deleteTask = (index: number) => {
+    const newTasks = tasks.filter((_, i) => i !== index)
+    setTasks(newTasks)
+  }
+
   const addTask = () => {
     if (data && description) {
       const newTask: Task = {
@@ -45,6 +51,12 @@ export default function Home() {
     }
   }
 
+  const [completedTasks, setCompletedTasks] = useState<number>(0)
+
+  const handleTaskComplete = () => {
+    setCompletedTasks(prev => prev + 1)
+  }
+
   return (
     <>
       <Header />
@@ -53,7 +65,7 @@ export default function Home() {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 px-4 md:px-0 md:grid-cols-4 py-5 gap-5">
             <Span title="Всего задач" count={tasks.length} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5ZThmMmUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1ib29rLW1hcmtlZC1pY29uIGx1Y2lkZS1ib29rLW1hcmtlZCI+PHBhdGggZD0iTTEwIDJ2OGwzLTMgMyAzVjIiLz48cGF0aCBkPSJNNCAxOS41di0xNUEyLjUgMi41IDAgMCAxIDYuNSAySDE5YTEgMSAwIDAgMSAxIDF2MThhMSAxIDAgMCAxLTEgMUg2LjVhMSAxIDAgMCAxIDAtNUgyMCIvPjwvc3ZnPg==" />
-            <Span title="Завершено" count={tasks.filter(task => task).length} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMyZWFlMGEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaXJjbGUtY2hlY2staWNvbiBsdWNpZGUtY2lyY2xlLWNoZWNrIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Im05IDEyIDIgMiA0LTQiLz48L3N2Zz4=" />
+            <Span title="Завершено" count={completedTasks} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMyZWFlMGEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaXJjbGUtY2hlY2staWNvbiBsdWNpZGUtY2lyY2xlLWNoZWNrIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Im05IDEyIDIgMiA0LTQiLz48L3N2Zz4=" />
             <Span title="Осталось сегодня" count={0} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDZlZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jay1pY29uIGx1Y2lkZS1jbG9jayI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cG9seWxpbmUgcG9pbnRzPSIxMiA2IDEyIDEyIDE2IDE0Ii8+PC9zdmc+" />
             <Span title="Просрочено" count={0} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZjAwMDAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jay1hbGVydC1pY29uIGx1Y2lkZS1jbG9jay1hbGVydCI+PHBhdGggZD0iTTEyIDZ2Nmw0IDIiLz48cGF0aCBkPSJNMTYgMjEuMTZhMTAgMTAgMCAxIDEgNS0xMy41MTYiLz48cGF0aCBkPSJNMjAgMTEuNXY2Ii8+PHBhdGggZD0iTTIwIDIxLjVoLjAxIi8+PC9zdmc+" />
           </div>
@@ -116,7 +128,38 @@ export default function Home() {
               className="w-full bg-gray-700 text-white px-10 py-3 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
             />
           </div>
+
+          <div className="flex items-center mb-10">
+            <Funnel color="#364153" />
+            <h1 className="text-gray-500 text-md ml-2">Фильтр</h1>
+          </div>
+
+          <div className="my-5">
+            {tasks.length > 0 ? (
+              tasks.map((task, index) => (
+                <Task
+                  key={index}
+                  task={task}
+                  onToggleComplete={handleTaskComplete}
+                  deleteTask={() => deleteTask(index)}
+                />
+              ))
+            ) : (
+              <p>
+                <div className="flex items-center justify-center">
+                  <ClipboardList color="#808080" size={50} />
+                </div>
+                <h1 className="text-white text-center justify-center text-xl">
+                  <br />
+                  Список задач пуст
+                  <br />
+                  Попробуйте создать новую задачу
+                </h1>
+              </p>
+              
+            )}
         </div>
+      </div>
       </div>
     </>
   )
