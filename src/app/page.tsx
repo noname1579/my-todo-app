@@ -6,10 +6,12 @@ import { ClipboardList, Funnel, Search } from "lucide-react"
 import Task from "./components/Task"
 
 interface Task {
+  id: string
   title: string
   description: string
   priority: 'high' | 'medium' | 'low'
   date: string
+  completed: boolean
 }
 
 export default function Home() {
@@ -18,6 +20,7 @@ export default function Home() {
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('high')
   const [date, setDate] = useState<string>('')
   const [tasks, setTasks] = useState<Task[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks')
@@ -30,47 +33,78 @@ export default function Home() {
     localStorage.setItem('tasks', JSON.stringify(tasks))
   }, [tasks])
 
-  const deleteTask = (index: number) => {
-    const newTasks = tasks.filter((_, i) => i !== index)
+  const deleteTask = (id: string) => {
+    const newTasks = tasks.filter(task => task.id !== id)
     setTasks(newTasks)
   }
 
   const addTask = () => {
     if (data && description) {
       const newTask: Task = {
+        id: Date.now().toString(),
         title: data,
         description: description,
         priority: priority,
         date: date,
+        completed: false
       }
       setTasks([...tasks, newTask])
-      setData(null)
+      setData('')
       setDescription('')
       setPriority('high')
       setDate('')
     }
   }
 
-  const [completedTasks, setCompletedTasks] = useState<number>(0)
-
-  const handleTaskComplete = () => {
-    setCompletedTasks(prev => prev + 1)
+  const toggleTaskCompletion = (id: string) => {
+    const updatedTasks = tasks.map(task => 
+      task.id === id ? {...task, completed: !task.completed} : task
+    )
+    setTasks(updatedTasks)
   }
+
+  const filteredTasks = tasks.filter(task => 
+    task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    task.description.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const completedTasksCount = tasks.filter(task => task.completed).length
+  const today = new Date().toISOString().split('T')[0]
+  const tasksDueToday = tasks.filter(task => task.date === today && !task.completed).length
+  const overdueTasks = tasks.filter(task => 
+    task.date && new Date(task.date) < new Date(today) && !task.completed
+  ).length
 
   return (
     <>
       <Header />
 
-      <div className="bg-gray-900">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 px-4 md:px-0 md:grid-cols-4 py-5 gap-5">
-            <Span title="Всего задач" count={tasks.length} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5ZThmMmUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1ib29rLW1hcmtlZC1pY29uIGx1Y2lkZS1ib29rLW1hcmtlZCI+PHBhdGggZD0iTTEwIDJ2OGwzLTMgMyAzVjIiLz48cGF0aCBkPSJNNCAxOS41di0xNUEyLjUgMi41IDAgMCAxIDYuNSAySDE5YTEgMSAwIDAgMSAxIDF2MThhMSAxIDAgMCAxLTEgMUg2LjVhMSAxIDAgMCAxIDAtNUgyMCIvPjwvc3ZnPg==" />
-            <Span title="Завершено" count={completedTasks} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMyZWFlMGEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaXJjbGUtY2hlY2staWNvbiBsdWNpZGUtY2lyY2xlLWNoZWNrIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Im05IDEyIDIgMiA0LTQiLz48L3N2Zz4=" />
-            <Span title="Осталось сегодня" count={0} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDZlZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jay1pY29uIGx1Y2lkZS1jbG9jayI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cG9seWxpbmUgcG9pbnRzPSIxMiA2IDEyIDEyIDE2IDE0Ii8+PC9zdmc+" />
-            <Span title="Просрочено" count={0} img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZjAwMDAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jay1hbGVydC1pY29uIGx1Y2lkZS1jbG9jay1hbGVydCI+PHBhdGggZD0iTTEyIDZ2Nmw0IDIiLz48cGF0aCBkPSJNMTYgMjEuMTZhMTAgMTAgMCAxIDEgNS0xMy41MTYiLz48cGF0aCBkPSJNMjAgMTEuNXY2Ii8+PHBhdGggZD0iTTIwIDIxLjVoLjAxIi8+PC9zdmc+" />
+      <div className="bg-gray-900 min-h-screen">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 py-5 gap-5">
+            <Span 
+              title="Всего задач" 
+              count={tasks.length} 
+              img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5ZThmMmUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1ib29rLW1hcmtlZC1pY29uIGx1Y2lkZS1ib29rLW1hcmtlZCI+PHBhdGggZD0iTTEwIDJ2OGwzLTMgMyAzVjIiLz48cGF0aCBkPSJNNCAxOS41di0xNUEyLjUgMi41IDAgMCAxIDYuNSAySDE5YTEgMSAwIDAgMSAxIDF2MThhMSAxIDAgMCAxLTEgMUg2LjVhMSAxIDAgMCAxIDAtNUgyMCIvPjwvc3ZnPg==" 
+            />
+            <Span 
+              title="Завершено" 
+              count={completedTasksCount} 
+              img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMyZWFlMGEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaXJjbGUtY2hlY2staWNvbiBsdWNpZGUtY2lyY2xlLWNoZWNrIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Im05IDEyIDIgMiA0LTQiLz48L3N2Zz4=" 
+            />
+            <Span 
+              title="Осталось сегодня" 
+              count={tasksDueToday} 
+              img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDZlZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jay1pY29uIGx1Y2lkZS1jbG9jayI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cG9seWxpbmUgcG9pbnRzPSIxMiA2IDEyIDEyIDE2IDE0Ii8+PC9zdmc+" 
+            />
+            <Span 
+              title="Просрочено" 
+              count={overdueTasks} 
+              img="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZjAwMDAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jay1hbGVydC1pY29uIGx1Y2lkZS1jbG9jay1hbGVydCI+PHBhdGggZD0iTTEyIDZ2Nmw0IDIiLz48cGF0aCBkPSJNMTYgMjEuMTZhMTAgMTAgMCAxIDEgNS0xMy41MTYiLz48cGF0aCBkPSJNMjAgMTEuNXY2Ii8+PHBhdGggZD0iTTIwIDIxLjVoLjAxIi8+PC9zdmc+" 
+            />
           </div>
 
-          <div className="w-full mx-auto">
+          <div className="w-full">
             <div className="w-full border border-gray-700 rounded-xl p-6 bg-gray-800 shadow-lg">
               <div className="flex flex-col space-y-5">
                 <input
@@ -80,38 +114,51 @@ export default function Home() {
                   onChange={e => setData(e.target.value)}
                   className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
                 />
-                {data && <div>
-                  <input
-                    type="text"
-                    placeholder="Описание задачи"
-                    value={description}
-                    onChange={e => setDescription(e.target.value)}
-                    className="w-full bg-gray-700 text-white px-4 pt-3 pb-10 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                  />
-                  <div className="flex mt-5">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jazEtaWNvbiBsdWNpZGUtY2xvY2stMSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cG9seWxpbmUgcG9pbnRzPSIxMiA2IDEyIDEyIDE0LjUgOCIvPjwvc3ZnPg==" alt="" />
-                    <select
-                      name="category"
-                      value={priority}
-                      onChange={e => setPriority(e.target.value as 'high' | 'medium' | 'low')}
-                      className="p-2 mx-3 text-white border-gray-600 rounded-xl bg-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                    >
-                      <option value="high">Высокий приоритет</option>
-                      <option value="medium">Средний приоритет</option>
-                      <option value="low">Низкий приоритет</option>
-                    </select>
+                {data && (
+                  <div>
+                    <textarea
+                      placeholder="Описание задачи"
+                      value={description}
+                      onChange={e => setDescription(e.target.value)}
+                      className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all min-h-[100px]"
+                    />
+                    <div className="flex mt-5 items-center">
+                      <img 
+                        src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jazEtaWNvbiBsdWNpZGUtY2xvY2stMSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cG9seWxpbmUgcG9pbnRzPSIxMiA2IDEyIDEyIDE0LjUgOCIvPjwvc3ZnPg==" 
+                        alt="Priority" 
+                        className="w-5 h-5"
+                      />
+                      <select
+                        value={priority}
+                        onChange={e => setPriority(e.target.value as 'high' | 'medium' | 'low')}
+                        className="p-2 mx-3 text-white border-gray-600 rounded-xl bg-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                      >
+                        <option value="high">Высокий приоритет</option>
+                        <option value="medium">Средний приоритет</option>
+                        <option value="low">Низкий приоритет</option>
+                      </select>
 
-                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jYWxlbmRhci1pY29uIGx1Y2lkZS1jYWxlbmRhciI+PHBhdGggZD0iTTggMnY0Ii8+PHBhdGggZD0iTTE2IDJ2NCIvPjxyZWN0IHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgeD0iMyIgeT0iNCIgcng9IjIiLz48cGF0aCBkPSJNMyAxMGgxOCIvPjwvc3ZnPg==" alt="" />
-                    <input
-                      type="date"
-                      id="date"
-                      value={date}
-                      onChange={e => setDate(e.target.value)}
-                      className="mx-2 text-white p-2 border bg-gray-700 border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                    />    
+                      <img 
+                        src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jYWxlbmRhci1pY29uIGx1Y2lkZS1jYWxlbmRhciI+PHBhdGggZD0iTTggMnY0Ii8+PHBhdGggZD0iTTE2IDJ2NCIvPjxyZWN0IHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgeD0iMyIgeT0iNCIgcng9IjIiLz48cGF0aCBkPSJNMyAxMGgxOCIvPjwvc3ZnPg==" 
+                        alt="Date" 
+                        className="w-5 h-5 ml-2"
+                      />
+                      <input
+                        type="date"
+                        value={date}
+                        onChange={e => setDate(e.target.value)}
+                        className="mx-2 text-white p-2 border bg-gray-700 border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                      />    
+                    </div>
                   </div>
-                </div>}
-                <button onClick={addTask} className="ml-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                )}
+                <button 
+                  onClick={addTask} 
+                  disabled={!data}
+                  className={`ml-auto py-2 px-5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
+                    data ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
                   Добавить задачу
                 </button>
               </div>
@@ -124,42 +171,47 @@ export default function Home() {
             </div>
             <input
               type="text"
-              placeholder='Найти задачу'
+              placeholder="Найти задачу"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
               className="w-full bg-gray-700 text-white px-10 py-3 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
             />
           </div>
 
-          <div className="flex items-center mb-10">
+          <div className="flex items-center mb-5">
             <Funnel color="#364153" />
             <h1 className="text-gray-500 text-md ml-2">Фильтр</h1>
           </div>
 
           <div className="my-5">
-            {tasks.length > 0 ? (
-              tasks.map((task, index) => (
+            {filteredTasks.length > 0 ? (
+              filteredTasks.map((task) => (
                 <Task
-                  key={index}
+                  key={task.id}
                   task={task}
-                  onToggleComplete={handleTaskComplete}
-                  deleteTask={() => deleteTask(index)}
+                  onToggleComplete={() => toggleTaskCompletion(task.id)}
+                  deleteTask={() => deleteTask(task.id)}
                 />
               ))
+            ) : tasks.length > 0 ? (
+              <div className="text-center py-10">
+                <Search size={50} className="mx-auto text-gray-500" />
+                <h1 className="text-white text-xl mt-4">
+                  Задачи не найдены
+                </h1>
+              </div>
             ) : (
-              <p>
-                <div className="flex items-center justify-center">
-                  <ClipboardList color="#808080" size={50} />
-                </div>
-                <h1 className="text-white text-center justify-center text-xl">
-                  <br />
+              <div className="text-center py-10">
+                <ClipboardList size={50} className="mx-auto text-gray-500" />
+                <h1 className="text-white text-xl mt-4">
                   Список задач пуст
                   <br />
                   Попробуйте создать новую задачу
                 </h1>
-              </p>
-              
+              </div>
             )}
+          </div>
         </div>
-      </div>
       </div>
     </>
   )
