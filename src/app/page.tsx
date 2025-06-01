@@ -4,6 +4,8 @@ import Header from "./components/Header"
 import Span from "./components/Span"
 import { ClipboardList, Funnel, Search } from "lucide-react"
 import Task from "./components/Task"
+import { Bouncy } from "ldrs/react"
+import 'ldrs/react/Bouncy.css'
 
 interface Task {
   id: string
@@ -21,12 +23,14 @@ export default function Home() {
   const [date, setDate] = useState<string>('')
   const [tasks, setTasks] = useState<Task[]>([])
   const [searchQuery, setSearchQuery] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks')
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks))
     }
+    setLoading(false) // Set loading to false after tasks are loaded
   }, [])
 
   useEffect(() => {
@@ -182,7 +186,15 @@ export default function Home() {
           </div>
 
           <div className="my-5">
-            {filteredTasks.length > 0 ? (
+            {loading ? (
+              <div className="text-center py-10">
+                <Bouncy
+                  size="45"
+                  speed="1.5"
+                  color="white" 
+                />
+              </div>
+            ) : filteredTasks.length > 0 ? (
               filteredTasks.map(task => (
                 <Task
                   key={task.id}
