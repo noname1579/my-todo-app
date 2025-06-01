@@ -30,7 +30,7 @@ export default function Home() {
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks))
     }
-    setLoading(false) // Set loading to false after tasks are loaded
+    setLoading(false)
   }, [])
 
   useEffect(() => {
@@ -68,16 +68,13 @@ export default function Home() {
   }
 
   const filteredTasks = tasks.filter(task => 
-    task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    task.description.toLowerCase().includes(searchQuery.toLowerCase())
+    task.title.toLowerCase().includes(searchQuery.toLowerCase()) || task.description.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const completedTasksCount = tasks.filter(task => task.completed).length
   const today = new Date().toISOString().split('T')[0]
   const tasksDueToday = tasks.filter(task => task.date === today && !task.completed).length
-  const overdueTasks = tasks.filter(task => 
-    task.date && new Date(task.date) < new Date(today) && !task.completed
-  ).length
+  const overdueTasks = tasks.filter(task => task.date && new Date(task.date) < new Date(today) && !task.completed).length
 
   return (
     <>
@@ -157,9 +154,7 @@ export default function Home() {
                 <button 
                   onClick={addTask} 
                   disabled={!data}
-                  className={`ml-auto py-2 px-5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
-                    data ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                  }`}
+                  className={`ml-auto py-2 px-5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${data ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}
                 >
                   Добавить задачу
                 </button>
