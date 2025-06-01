@@ -122,11 +122,10 @@ export default function Home() {
                       onChange={e => setDescription(e.target.value)}
                       className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all min-h-[100px]"
                     />
-                    <div className="flex mt-5 items-center">
+                    <div className="block md:flex mt-5 items-center">
                       <img 
                         src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jazEtaWNvbiBsdWNpZGUtY2xvY2stMSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cG9seWxpbmUgcG9pbnRzPSIxMiA2IDEyIDEyIDE0LjUgOCIvPjwvc3ZnPg==" 
-                        alt="Priority" 
-                        className="w-5 h-5"
+                        className="w-5 h-5 my-1"
                       />
                       <select
                         value={priority}
@@ -140,8 +139,7 @@ export default function Home() {
 
                       <img 
                         src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jYWxlbmRhci1pY29uIGx1Y2lkZS1jYWxlbmRhciI+PHBhdGggZD0iTTggMnY0Ii8+PHBhdGggZD0iTTE2IDJ2NCIvPjxyZWN0IHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgeD0iMyIgeT0iNCIgcng9IjIiLz48cGF0aCBkPSJNMyAxMGgxOCIvPjwvc3ZnPg==" 
-                        alt="Date" 
-                        className="w-5 h-5 ml-2"
+                        className="w-5 h-5 md:ml-2 my-2"
                       />
                       <input
                         type="date"
@@ -185,7 +183,7 @@ export default function Home() {
 
           <div className="my-5">
             {filteredTasks.length > 0 ? (
-              filteredTasks.map((task) => (
+              filteredTasks.map(task => (
                 <Task
                   key={task.id}
                   task={task}
