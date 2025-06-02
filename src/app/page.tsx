@@ -175,12 +175,12 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex items-center mb-5">
+          {/* <div className="flex items-center mb-5">
             <Funnel color="#364153" />
             <h1 className="text-gray-500 text-md ml-2">Фильтр</h1>
-          </div>
+          </div> */}
 
-          <div className="my-5">
+          <div className="my-8">
             {loading ? (
               <div className="text-center py-10">
                 <Bouncy
