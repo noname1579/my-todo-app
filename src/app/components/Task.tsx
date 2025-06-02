@@ -64,7 +64,7 @@ export default function TaskItem({ task, onToggleComplete, deleteTask, updateTas
             <select 
               value={editedPriority} 
               onChange={e => setEditedPriority(e.target.value as 'high' | 'medium' | 'low')} 
-              className="mt-2 bg-gray-700 text-white border border-gray-500 rounded-lg p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+              className="mt-2 cursor-pointer bg-gray-700 text-white border border-gray-500 rounded-lg p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
             >
               <option value="high">Высокий приоритет</option>
               <option value="medium">Средний приоритет</option>
@@ -72,7 +72,7 @@ export default function TaskItem({ task, onToggleComplete, deleteTask, updateTas
             </select>
            <button 
               onClick={handleSave} 
-              className="mt-4 text-white px-4 py-2 bg-blue-600 rounded-lg duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+              className="mt-4 text-white px-4 py-2 bg-blue-600 rounded-lg duration-200 cursor-pointer focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
             >
               Сохранить
             </button>

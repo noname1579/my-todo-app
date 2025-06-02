@@ -138,7 +138,7 @@ export default function Home() {
                       <select
                         value={priority}
                         onChange={e => setPriority(e.target.value as 'high' | 'medium' | 'low')}
-                        className="p-2 mx-3 text-white border-gray-600 rounded-xl bg-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="p-2 cursor-pointer mx-3 text-white border-gray-600 rounded-xl bg-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
                       >
                         <option value="high">Высокий приоритет</option>
                         <option value="medium">Средний приоритет</option>
@@ -153,7 +153,7 @@ export default function Home() {
                         type="date"
                         value={date}
                         onChange={e => setDate(e.target.value)}
-                        className="mx-2 text-white p-2 border bg-gray-700 border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mx-2 cursor-pointer text-white p-2 border bg-gray-700 border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
                       />    
                     </div>
                   </div>
@@ -161,7 +161,7 @@ export default function Home() {
                 <button 
                   onClick={addTask} 
                   disabled={!data}
-                  className={`md:ml-auto py-2 px-5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${data ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}
+                  className={`md:ml-auto py-2 px-5 cursor-pointer rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${data ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}
                 >
                   Добавить задачу
                 </button>
