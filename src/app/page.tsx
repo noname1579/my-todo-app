@@ -67,6 +67,13 @@ export default function Home() {
     setTasks(updatedTasks)
   }
 
+  const updateTask = (updatedTask: { id: string; title: string; description: string; priority: 'high' | 'medium' | 'low' }) => {
+    const updatedTasks = tasks.map(task => 
+      task.id === updatedTask.id ? { ...task, ...updatedTask } : task
+    )
+    setTasks(updatedTasks)
+  }
+
   const filteredTasks = tasks.filter(task => 
     task.title.toLowerCase().includes(searchQuery.toLowerCase()) || task.description.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -154,7 +161,7 @@ export default function Home() {
                 <button 
                   onClick={addTask} 
                   disabled={!data}
-                  className={`ml-auto py-2 px-5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${data ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}
+                  className={`md:ml-auto py-2 px-5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${data ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}
                 >
                   Добавить задачу
                 </button>
@@ -175,11 +182,6 @@ export default function Home() {
             />
           </div>
 
-          {/* <div className="flex items-center mb-5">
-            <Funnel color="#364153" />
-            <h1 className="text-gray-500 text-md ml-2">Фильтр</h1>
-          </div> */}
-
           <div className="my-8">
             {loading ? (
               <div className="text-center py-10">
@@ -196,6 +198,7 @@ export default function Home() {
                   task={task}
                   onToggleComplete={() => toggleTaskCompletion(task.id)}
                   deleteTask={() => deleteTask(task.id)}
+                  updateTask={updateTask}
                 />
               ))
             ) : tasks.length > 0 ? (
