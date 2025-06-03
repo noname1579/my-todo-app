@@ -6,6 +6,7 @@ import { ClipboardList, Funnel, Search } from "lucide-react"
 import Task from "./components/Task"
 import { Bouncy } from "ldrs/react"
 import 'ldrs/react/Bouncy.css'
+import Image from "next/image"
 
 interface Task {
   id: string
@@ -131,8 +132,9 @@ export default function Home() {
                       className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all min-h-[100px]"
                     />
                     <div className="block md:flex mt-5 items-center">
-                      <img 
+                      <Image
                         src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jbG9jazEtaWNvbiBsdWNpZGUtY2xvY2stMSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cG9seWxpbmUgcG9pbnRzPSIxMiA2IDEyIDEyIDE0LjUgOCIvPjwvc3ZnPg==" 
+                        alt="img"
                         className="w-5 h-5 my-1"
                       />
                       <select
